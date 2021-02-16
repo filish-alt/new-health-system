@@ -1,17 +1,16 @@
 package com.HospitalMangagmentSystem.demo.Service;
 
-import com.HospitalMangagmentSystem.demo.Dto.AddressDto;
 import com.HospitalMangagmentSystem.demo.Dto.UserDto;
 import com.HospitalMangagmentSystem.demo.Exception.DataNotFoundException;
 
-import com.HospitalMangagmentSystem.demo.domain.Address;
-import com.HospitalMangagmentSystem.demo.domain.Role;
-import com.HospitalMangagmentSystem.demo.domain.Rolename;
-import com.HospitalMangagmentSystem.demo.domain.User;
+import com.HospitalMangagmentSystem.demo.domain.*;
+import com.HospitalMangagmentSystem.demo.message.request.SignUpForm;
+import com.HospitalMangagmentSystem.demo.message.response.ResponseMessage;
 import com.HospitalMangagmentSystem.demo.repository.RoleRepository;
 import com.HospitalMangagmentSystem.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -24,11 +23,7 @@ public class UserserviceImplementation implements UserService{
     UserRepository userep;
 
     @Autowired
-RoleRepository rolrep;
-
-    @Autowired
-    PasswordEncoder encoder;
-
+    RoleRepository rolrep;
     @Override
     public List<User> getalluser() {
         return userep.findAll();
@@ -53,6 +48,24 @@ RoleRepository rolrep;
         return userep.findUserByRoles(rolrep.findByName(Rolename.ROLE_DOCTOR).orElse(null));
     }
 
+    @Override
+    public User updateauser(int id, SignUpForm userdto) {
+        User user =userep.findById(id).orElseThrow(()->
+                new DataNotFoundException("patient with id " + id + " not found") );
+        user.setFirst(userdto.getFirst());
+        user.setLast(userdto.getLast());
+        user.setGender(userdto.getGender());
+        user.setDob(userdto.getDob());
+        user.setEmail(userdto.getEmail());
+        user.setMobile(userdto.getMobile());
+        user.setDepartment(userdto.getDepartment());
+        user.setDesignation(userdto.getDesignation());
+        user.setEducation(userdto.getEducation());
+
+        userep.save(user);
+        return user;
+    }
+
 
     @Override
     public void delteuser(int id) {
@@ -63,23 +76,6 @@ RoleRepository rolrep;
             userep.delete(use);
         }
 
-    @Override
-    public User updateUser(UserDto useDto, int id) {
-        // TODO Auto-generated method stub
-        User use;
-        use = userep.findById(id).orElseThrow(()->
-                new DataNotFoundException("Address with id " + id + " not found") );
-        use.setFirst(useDto.getFirst());
-        use.setLast(useDto.getLast());
-        use.setGender(useDto.getGender());
-        use.setMobile(useDto.getMobile());
-        encoder.encode(useDto.getPassword());
-        use.setDesignation(useDto.getDesignation());
-        use.setDepartment(useDto.getDepartment());
-        use.setAddress(useDto.getAddress());
-        use.setEmail(useDto.getEmail());
-        use.setDob(useDto.getDob());
-        use.setEducation(useDto.getEducation());
-        return this.userep.save(use);
-    }
+
+
 }

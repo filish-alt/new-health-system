@@ -1,12 +1,10 @@
 package com.HospitalMangagmentSystem.demo.controller;
 
 
-import com.HospitalMangagmentSystem.demo.Dto.AddressDto;
-import com.HospitalMangagmentSystem.demo.Dto.UserDto;
 import com.HospitalMangagmentSystem.demo.Service.UserService;
-import com.HospitalMangagmentSystem.demo.domain.Address;
 import com.HospitalMangagmentSystem.demo.domain.Patients;
 import com.HospitalMangagmentSystem.demo.domain.User;
+import com.HospitalMangagmentSystem.demo.message.request.SignUpForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,37 +18,36 @@ public class UserController {
     UserService userservice;
 
     @GetMapping("/User")
-    public List<User> getuser() {
+    public List<User> getuser(){
 
         return this.userservice.getalluser();
     }
-
     @GetMapping("/User/role")
-    public List<User> getuserrole() {
+    public List<User> getuserrole(){
 
         return this.userservice.getbyrole();
     }
-
     @GetMapping("/User/{id}")
     @Transactional
-    public User getoneuser(@PathVariable int id) {
+    public User getoneuser( @PathVariable int id) {
 
         return this.userservice.getoneuser(id);
 
     }
-
     @DeleteMapping("/User/{id}")
     @Transactional
-    public void delteuser(@PathVariable int id) {
+    public void delteuser( @PathVariable int id) {
         this.userservice.delteuser(id);
 
 
     }
 
-    @PutMapping("/User/{id}")
-    public User updateAddress(@PathVariable int id, @RequestBody UserDto use) {
+    @PutMapping("/Update/{id}")
+    @Transactional
+    public void updateuser(@PathVariable int id, @RequestBody SignUpForm singupform) {
+        this.userservice.updateauser(id,singupform);
 
 
-        return this.userservice.updateUser(use, id);
     }
+
 }
